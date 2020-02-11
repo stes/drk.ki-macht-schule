@@ -1,0 +1,214 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Fairness im Maschinellen Lernen</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700" rel="stylesheet"
+    nonce="snpkNIRBOTZM21RH7iW6Eg" />
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body onload="main()">
+  <script src="d3.min.js" nonce="snpkNIRBOTZM21RH7iW6Eg"></script>
+  <script src="bundle.js" nonce="snpkNIRBOTZM21RH7iW6Eg"></script>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Attacking discrimination with smarter machine learning</a>
+  </nav>
+
+  <hr>
+
+  <table>
+    <tr>
+      <td>&nbsp;</td>
+      <td colspan=3>
+        <div class="figure-title">
+          Aufgabe: Maximiere den Gewinn
+        </div>
+        <div class="figure-caption">
+          Verschiebe die Entscheidungsgrenzen, und erhöhe die Punktzahl.
+          <br>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">
+        <table>
+          <tr>
+            <td width="200" valign="top" align="right">
+              <div style="margin-top:44px">
+                <span class="margin-bold">Testergebnis</span><br>
+                <span class="margin-text">
+                  Höherer Wert bedeutet größeres Krankheitsrisiko
+                </span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td width="200" valign="bottom" align="right">
+              <div style="margin-top:160px">
+                <span class="margin-text">
+                  Jeder Kreis repräsentiert einen Hund, der potentiell erkrankt sein könnte.
+                </span>>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td width="200" valign="bottom" align="right">
+              <div style="margin-top:30px">
+                <span class="margin-bold">Color</span>
+              </div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+
+      <td valign="top">
+        <div class="big-label" style="margin-bottom:50px">Entscheidung</div>
+        <div id="single-histogram0"></div>
+        <div id="single-histogram-legend0" class="histogram-legend"></div>
+      </td>
+      <td width=30>&nbsp;</td>
+      <td valign="top">
+        <div class="big-label" style="margin-bottom:20px;margin-left:10px">Ergebnis</div>
+        <div id="single-correct0"></div>
+        <div id="single-pies0"></div>
+        <div class="profit-readout">Profit: <span class="readout" id="single-profit0"></span></div>
+      </td>
+    </tr>
+  </table>
+
+  <hr>
+
+  <div class="figure-title">
+    Therapieentscheidungen für verschiedene Gruppen
+  </div>
+  <div class="figure-caption">
+    Wie können Therapieentscheidungen für mehrere Gruppen fair getroffen werden können?<br>
+    Verschiebe die Entscheidungsgrenzen solange, bist du das Ergebnis als "fair" ansiehst<br>
+    Wichtig: Es gibt keine richtige oder falsche Wahl -- verschiedene Auffassungen von Fairness führen zu verschiedenen
+    Ergebnissen.
+  </div>
+  <table>
+    <tr>
+      <td rowspan=4 width=200 valign="top">
+        <div class="big-label" style="margin-top:3px">Strategien</div>
+        <span class="margin-text">
+          Erhöhe die Punktzahl mit:
+          <br><br><br>
+          <button class="demo" id="max-profit">Maximiere Punkte</button>
+          <br>Keine Nebenbedingungen
+          <p><br>
+            <button class="demo" id="group-unaware">Gruppenagnostisch</button>
+            <br>
+            Entscheidungsgrenzen <br>sind gleich
+            <p><br>
+              <button class="demo" id="demographic-parity">Gruppengleichheit</button>
+              <br>
+              Gruppen erhalten gleiche<br>Anzahl an Therapien
+              <p><br>
+                <button class="demo" id="equal-opportunity">Chancengleichheit</button>
+                <br>
+                Kranke Hunde in den<br>Gruppen erhalten gleiche<br>Anzahl an Therapien
+                <br><br><br>
+
+                <div class="thin annotation max-profit-annotation">
+                  <div class="title">Max Profit</div>
+                  The most profitable, since there are no constraints.
+                  But the two groups have different thresholds, meaning they
+                  are held to different standards.
+                </div>
+                <div class="thin annotation group-unaware-annotation">
+                  <div class="title">Group Unaware</div>
+                  Both groups have the same threshold, but the orange group has
+                  been given fewer loans overall. Among people
+                  who would pay back a loan, the orange group is also at a
+                  disadvantage.
+                </div>
+                <div class="thin annotation demographic-parity-annotation">
+                  <div class="title">Demographic Parity</div>
+                  The number of loans given to each group is the same, but among people
+                  who would pay back a loan, the blue group is at a
+                  disadvantage.
+                </div>
+                <div class="thin annotation equal-opportunity-annotation">
+                  <div class="title">Equal Opportunity</div>
+                  Among people
+                  who would pay back a loan, blue and orange groups do equally well.
+                  This choice is almost as profitable as demographic parity,
+                  and about as many people get loans overall.
+                </div>
+        </span>
+      </td>
+      <td colspan=3>
+
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">
+        <div class="big-label">Population I: Schäferhund</div>
+        <img src="shepherd.jpg" height="100px">
+        <br><br>
+        <div id="histogram0"></div>
+        <div id="histogram-legend0" class="histogram-legend"></div>
+      </td>
+      <td width=20>&nbsp;</td>
+      <td valign="top">
+        <!-- start upper right content label -->
+        <div class="big-label" style="margin-left:10px">Population II: Dackel</div>
+        <img src="dackel.jpg" height="100px">
+        <!-- end upper right content label -->
+        <br><br>
+        <!-- start upper right content -->
+        <div id="histogram1"></div>
+        <div id="histogram-legend1" class="histogram-legend"></div>
+        <!-- end upper right content -->
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">
+        <div id="profit-title" style="position:relative">
+          Punktzahl = <span id="total-profit"></span>
+          <div style="position:absolute;left:-20;top:-20">
+            <svg>
+              <rect class="annotation max-profit-annotation" x="10" y="10" width="230" height="50" rx="20" ry="20" />
+            </svg>
+          </div>
+        </div>
+      </td>
+      <td width=20>&nbsp;</td>
+      <td valign="top">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <!-- start lower left content -->
+        <div id="correct0"></div>
+        <div id="pies0"></div>
+        <div class="profit-readout">Punkte: <span class="readout" id="profit0"></span></div>
+        <!-- end lower left content-->
+      </td>
+      <td width=20>&nbsp;</td>
+      <td valign="top">
+        <div id="correct1"></div>
+        <div id="pies1"></div>
+        <div class="profit-readout">Punkte: <span class="readout" id="profit1"></span></div>
+      </td>
+    </tr>
+  </table>
+  </div>
+</body>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="jquery-3.3.1.slim.min.js"></script>
+<script src="popper.min.js"></script>
+<script src="bootstrap.min.js"></script>
+
+</html>
